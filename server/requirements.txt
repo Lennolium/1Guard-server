@@ -1,0 +1,8 @@
+PyJWT==2.8.0
+pymongo==4.6.0
+requests==2.31.0
+pyOpenSSL==23.3.0
+flask==3.0.0
+Flask-HTTPAuth==4.8.0
+werkzeug==3.0.1
+python-whois==0.8.0
