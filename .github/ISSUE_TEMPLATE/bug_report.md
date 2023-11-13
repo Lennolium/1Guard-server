@@ -8,9 +8,9 @@ labels: "Bug: Needs Confirmation 🧐"
 <!--- Logo and Header: IGNORE THIS -->
 <div align="center">  
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Lennolium/1Guard/main/img/banner_dark.png" width="500vw">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Lennolium/1Guard/main/img/banner_light.png" width="500vw">
-  <img alt="Application Banner" src="https://raw.githubusercontent.com/Lennolium/1Guard/main/img/banner_light.png" width="500vw">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Lennolium/1Guard-server/main/img/banner_dark.png" width="500vw">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Lennolium/1Guard-server/main/img/banner_light.png" width="500vw">
+  <img alt="Application Banner" src="https://raw.githubusercontent.com/Lennolium/1Guard-server/main/img/banner_light.png" width="500vw">
 </picture>
 </div>
 <h2 align="center">Issue Submit Form</h2>
@@ -67,10 +67,10 @@ labels: "Bug: Needs Confirmation 🧐"
 
 ## Checklist
 <!-- Please verify that you have completed the following steps -->
-- [ ] I have searched the [Issues](https://github.com/Lennolium/1Guard/issues) of this repository and believe that this is not a duplicate.
+- [ ] I have searched the [Issues](https://github.com/Lennolium/1Guard-server/issues) of this repository and believe that this is not a duplicate.
 - [ ] I have checked the documentation/wiki and found no answer.
 - [ ] I have attempted to find the simplest possible steps to reproduce the issue.
 - [ ] I have included screenshots / logs / repro-steps in this issue.
 - [ ] I have checked the logs and found no relevant messages (only if applicable).
-- [ ] I am not reporting a personal or third party security vulnerability. Instead, please visit the [Security Policy](https://github.com/Lennolium/1Guard/blob/main/.github/SECURITY.md).
+- [ ] I am not reporting a personal or third party security vulnerability. Instead, please visit the [Security Policy](https://github.com/Lennolium/1Guard-server/blob/main/.github/SECURITY.md).
 - [ ] (Optional) I want to appear in the commit description as a contributor of this feature or fix.
