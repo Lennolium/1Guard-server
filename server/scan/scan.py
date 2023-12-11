@@ -19,6 +19,7 @@ __status__ = "Prototype"
 import random
 
 from scan import https
+from . import trustpilot
 
 
 def get_data(domain):
@@ -41,4 +42,5 @@ def get_data(domain):
 # TODO: Implement the user score function. Right now it is just a random
 #  number (0-15).
 def get_user_score_trustpilot(domain):
+    data = trustpilot.get_trustpilot_data(domain)
     return random.randint(0, 15)
