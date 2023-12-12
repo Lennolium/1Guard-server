@@ -27,8 +27,8 @@ from flask_httpauth import HTTPBasicAuth, HTTPTokenAuth
 from werkzeug.http import HTTP_STATUS_CODES
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from controller import controller
-from secrets import secrets
+from ..controller import controller
+from ..secrets import secrets
 
 # Child logger.
 LOGGER = logging.getLogger(__name__)
@@ -39,9 +39,7 @@ token_auth = HTTPTokenAuth()
 
 # Create the Flask application.
 app = Flask(__name__)
-app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1,
-                        x_port=1
-                        )
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1)
 
 
 def generate_token(uuid, exp=1):
@@ -60,11 +58,12 @@ def generate_token(uuid, exp=1):
     # Payload for the JWT token, to be signed with the API secret key,
     # to be unique for each user, and to expire in 1 hour by default.
     payload = {
-            "uuid": uuid,
-            "exp": datetime.utcnow() + timedelta(
-                    hours=exp,
-                    )
-            }
+        "uuid": uuid,
+        "exp": datetime.utcnow()
+        + timedelta(
+            hours=exp,
+        ),
+    }
 
     token = jwt.encode(payload, secrets.API_SECRET_KEY, algorithm="HS256")
     return token
@@ -104,9 +103,7 @@ def throttle(f):
         if last_call and now - last_call < timedelta(seconds=time_interval):
             LOGGER.debug(f"Throttling requests from {request.remote_addr}.")
 
-            return auth_error(429,
-                              "Please try again later."
-                              )
+            return auth_error(429, "Please try again later.")
         last_call = now
         return f(*args, **kwargs)
 
@@ -126,8 +123,10 @@ def auth_password(username, password):
     :rtype: str
     """
 
-    if username and password == hashlib.sha256(secrets.API_ACCESS_KEY.encode()
-                                               ).hexdigest():
+    if (
+        username
+        and password == hashlib.sha256(secrets.API_ACCESS_KEY.encode()).hexdigest()
+    ):
         return str(username)
 
 
@@ -159,9 +158,7 @@ def auth_verify(token):
     """
 
     try:
-        token_dec = jwt.decode(token, secrets.API_SECRET_KEY,
-                               algorithms=["HS256"]
-                               )
+        token_dec = jwt.decode(token, secrets.API_SECRET_KEY, algorithms=["HS256"])
 
     except Exception as e:
         LOGGER.error(f"Could not verify token: {str(e)}.")
@@ -237,10 +234,12 @@ def feedback():
     # Forward the data to the controller.
     response_data = controller.feedback(domain, user_feedback)
 
-    return jsonify({"message": "/analyze/feedback API route successfully "
-                               f"called! Response data: {str(response_data)}"
-                    }
-                   )
+    return jsonify(
+        {
+            "message": "/analyze/feedback API route successfully "
+            f"called! Response data: {str(response_data)}"
+        }
+    )
 
 
 def start():

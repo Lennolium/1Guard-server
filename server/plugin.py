@@ -21,7 +21,7 @@ import uuid
 
 import requests
 
-from secrets import secrets
+from ..secrets import secrets
 
 # API_LOGIN_URL = "http://127.0.0.1:5000/auth/login"
 # API_ANALYZE_URL = "http://127.0.0.1:5000/analyze/ask"
@@ -36,14 +36,10 @@ def api_login():
     # Authorization by login with username (uuid) and api password.
     try:
         # Hash the API access key.
-        password = hashlib.sha256(
-                secrets.API_ACCESS_KEY.encode()
-                ).hexdigest()
+        password = hashlib.sha256(secrets.API_ACCESS_KEY.encode()).hexdigest()
         username = uuid.getnode()
 
-        response = requests.post(API_LOGIN_URL, auth=(username,
-                                                      password)
-                                 )
+        response = requests.post(API_LOGIN_URL, auth=(username, password))
 
         if response.status_code == 200:
             response_data = response.json()
@@ -52,9 +48,9 @@ def api_login():
             return token
 
         else:
-            print("Request failed with status code:", response.status_code,
-                  response.text
-                  )
+            print(
+                "Request failed with status code:", response.status_code, response.text
+            )
             return
 
     except requests.exceptions.RequestException as e:
@@ -66,11 +62,9 @@ def api_analyze(data, token):
     try:
         # Authorization by passing the token in the header (needed
         # for every request).
-        headers = {'Authorization': f'Bearer {token}'}
+        headers = {"Authorization": f"Bearer {token}"}
 
-        response = requests.post(API_ANALYZE_URL, headers=headers,
-                                 json=data
-                                 )
+        response = requests.post(API_ANALYZE_URL, headers=headers, json=data)
 
         if response.status_code == 200:
             response_data = response.json()
@@ -78,9 +72,9 @@ def api_analyze(data, token):
             return response_data
 
         else:
-            print("Request failed with status code:", response.status_code,
-                  response.text
-                  )
+            print(
+                "Request failed with status code:", response.status_code, response.text
+            )
             return
 
     except requests.exceptions.RequestException as e:
@@ -92,11 +86,9 @@ def api_feedback(data, token):
     try:
         # Authorization by passing the token in the header (needed
         # for every request).
-        headers = {'Authorization': f'Bearer {token}'}
+        headers = {"Authorization": f"Bearer {token}"}
 
-        response = requests.post(API_FEEDBACK_URL, headers=headers,
-                                 json=data
-                                 )
+        response = requests.post(API_FEEDBACK_URL, headers=headers, json=data)
 
         if response.status_code == 200:
             response_data = response.json()
@@ -104,9 +96,9 @@ def api_feedback(data, token):
             return response_data
 
         else:
-            print("Request failed with status code:", response.status_code,
-                  response.text
-                  )
+            print(
+                "Request failed with status code:", response.status_code, response.text
+            )
             return
 
     except requests.exceptions.RequestException as e:
@@ -128,9 +120,7 @@ def plugin_mockup(domain):
     print("Received data from /analyze/ask API:")
     print(response)
 
-    data2 = {"domain": domain,
-             "user_feedback": "scam"
-             }
+    data2 = {"domain": domain, "user_feedback": "scam"}
     response2 = api_feedback(data2, token)
     print("Received data from /analyze/feedback API:")
     print(response2)
