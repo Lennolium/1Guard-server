@@ -19,10 +19,10 @@ __status__ = "Prototype"
 import logging
 from datetime import datetime, timedelta
 
-from database import database
-from model import ai
-from scan import scan
-from secrets import secrets
+from ..database import database
+from ..model import ai
+from ..scan import scan
+from ..secrets import secrets
 
 # Child logger.
 LOGGER = logging.getLogger(__name__)
@@ -39,9 +39,11 @@ def calculate_score(domain: str) -> tuple[int, int, str]:
 def analyze(domain):
     # Create database connection.
     LOGGER.debug("Connecting to database...")
-    db_manager = database.DatabaseManager(secrets.DB_URI, secrets.DB_NAME,
-                                          secrets.DB_COLLECTION,
-                                          )
+    db_manager = database.DatabaseManager(
+        secrets.DB_URI,
+        secrets.DB_NAME,
+        secrets.DB_COLLECTION,
+    )
 
     data = db_manager.get_by_domain(domain)
     now = datetime.now()
@@ -52,13 +54,11 @@ def analyze(domain):
         data_timestamp = None
 
     # Entry exists in database and is younger than 14 days.
-    if data_timestamp and now - data_timestamp < timedelta(
-            days=secrets.DB_RETENTION
-            ):
-
-        LOGGER.debug(f"Found entry for {domain} in database, which is younger "
-                     f"than {str(secrets.DB_RETENTION)} days."
-                     )
+    if data_timestamp and now - data_timestamp < timedelta(days=secrets.DB_RETENTION):
+        LOGGER.debug(
+            f"Found entry for {domain} in database, which is younger "
+            f"than {str(secrets.DB_RETENTION)} days."
+        )
 
     # No entry in database or older than 14 days -> calculate the score,
     # create a new entry and store it in the database.
@@ -66,9 +66,7 @@ def analyze(domain):
         score, user_score, category = calculate_score(domain)
 
         # Create a new entry.
-        entry = database.WebsiteScoreEntry(domain, score, user_score,
-                                           category
-                                           )
+        entry = database.WebsiteScoreEntry(domain, score, user_score, category)
 
         data = entry.to_dict()
 
@@ -85,13 +83,14 @@ def analyze(domain):
     # At this point, the score is either retrieved from the database or
     # calculated and stored in the database. Now, the score is returned
     # to the API endpoint, which will send it to the client.
-    return {"domain": data.get("domain"),
-            "score": data.get("score"),
-            "score_readable": data.get("score_readable"),
-            "user_score": data.get("user_score"),
-            "user_score_readable": data.get("user_score_readable"),
-            "category": data.get("category")
-            }
+    return {
+        "domain": data.get("domain"),
+        "score": data.get("score"),
+        "score_readable": data.get("score_readable"),
+        "user_score": data.get("user_score"),
+        "user_score_readable": data.get("user_score_readable"),
+        "category": data.get("category"),
+    }
 
 
 def feedback(domain: str, user_feedback: str) -> bool:

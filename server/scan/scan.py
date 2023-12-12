@@ -18,7 +18,7 @@ __status__ = "Prototype"
 # Imports.
 import random
 
-from scan import https
+from . import https
 from . import trustpilot
 
 
@@ -33,10 +33,10 @@ def get_data(domain):
     category = https.check_category(domain)
 
     return {
-            "ssl": ssl,
-            "headers": headers,
-            "category": category,
-            }
+        "ssl": ssl,
+        "headers": headers,
+        "category": category,
+    }
 
 
 # TODO: Implement the user score function. Right now it is just a random
