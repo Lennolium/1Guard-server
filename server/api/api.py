@@ -29,6 +29,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 from ..controller import controller
 from ..secrets import secrets
+from flask_cors import CORS
 
 # Child logger.
 LOGGER = logging.getLogger(__name__)
@@ -39,6 +40,7 @@ token_auth = HTTPTokenAuth()
 
 # Create the Flask application.
 app = Flask(__name__)
+CORS(app)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1)
 
 
