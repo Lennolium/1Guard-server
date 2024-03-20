@@ -125,10 +125,7 @@ def auth_password(username, password):
     :rtype: str
     """
 
-    if (
-        username
-        and password == hashlib.sha256(secrets.API_ACCESS_KEY.encode()).hexdigest()
-    ):
+    if username and password == hashlib.sha256(secrets.API_ACCESS_KEY.encode()).hexdigest():
         return str(username)
 
 
@@ -210,6 +207,20 @@ def analyze():
 
     # Extract the data from the request.
     domain = data.get("domain")
+
+    return (
+        jsonify(
+            {
+                "domain": "www.amazon.com",
+                "score": "15",
+                "score_readable": "A+",
+                "user_score": "14",
+                "user_score_readable": "A",
+                # "category": data.get("category"),
+            }
+        ),
+        200,
+    )
 
     # Forward the data to the controller.
     response_data = controller.analyze(domain)
