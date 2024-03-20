@@ -140,8 +140,7 @@ def auth_token():
     :rtype: flask.Response
     """
 
-    uuid = basic_auth.current_user()
-    token = generate_token(uuid)
+    token = generate_token(request.remote_addr)
     return jsonify({"token": token})
 
 
