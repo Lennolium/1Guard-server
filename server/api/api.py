@@ -130,6 +130,7 @@ def auth_password(username, password):
 
 
 @app.route("/auth/login", methods=["POST"])
+@basic_auth.login_required
 @throttle
 def auth_token():
     """
@@ -139,7 +140,8 @@ def auth_token():
     :rtype: flask.Response
     """
 
-    token = generate_token(request.remote_addr)
+    uuid = basic_auth.current_user()
+    token = generate_token(uuid)
     return jsonify({"token": token})
 
 
