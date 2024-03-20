@@ -130,7 +130,6 @@ def auth_password(username, password):
 
 
 @app.route("/auth/login", methods=["POST"])
-@basic_auth.login_required
 @throttle
 def auth_token():
     """
