@@ -123,10 +123,7 @@ def auth_password(username, password):
     :rtype: str
     """
 
-    if (
-        username
-        and password == hashlib.sha256(secrets.API_ACCESS_KEY.encode()).hexdigest()
-    ):
+    if username and password == hashlib.sha256(secrets.API_ACCESS_KEY.encode()).hexdigest():
         return str(username)
 
 
