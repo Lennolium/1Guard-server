@@ -22,7 +22,7 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
-from oneguardai import const
+from server import const
 
 # Child logger.
 LOGGER = logging.getLogger(__name__)
@@ -42,16 +42,11 @@ def get_favicon(domain: str, soup: BeautifulSoup) -> str or None:
     :return: The favicon url of the website
     """
 
-    for item in soup.find_all("link", attrs={
-            "rel": re.compile("^(shortcut icon|icon)$", re.I)
-            }
-                              ):
+    for item in soup.find_all("link", attrs={"rel": re.compile("^(shortcut icon|icon)$", re.I)}):
         return item.get("href")
 
     try:
-        testing = requests.get(f"https://{domain}/favicon.ico",
-                               timeout=const.TIMEOUT
-                               )
+        testing = requests.get(f"https://{domain}/favicon.ico", timeout=const.TIMEOUT)
         if testing.status_code == 200:
             return f"{domain}/favicon.ico"
 
@@ -135,11 +130,11 @@ def impressum_check(soup: BeautifulSoup) -> bool:
 
     try:
 
-        result = soup.find('a', string='Datenschutz')["href"]
+        result = soup.find("a", string="Datenschutz")["href"]
 
     except:
         try:
-            result = soup.find('a', string='Privacy')["href"]
+            result = soup.find("a", string="Privacy")["href"]
 
         except:
             return False
@@ -151,13 +146,12 @@ def impressum_check(soup: BeautifulSoup) -> bool:
     request = requests.get(link)
     soup2 = BeautifulSoup(request.text, "html.parser")
 
-    datenschutz_abschnitt = soup2.find('h1', {'id': 'privacyDefaultHeading'})
+    datenschutz_abschnitt = soup2.find("h1", {"id": "privacyDefaultHeading"})
 
     if datenschutz_abschnitt:
         datenschutz_text = ""
-        next_element = datenschutz_abschnitt.find_next('div')
-        while next_element and (
-                next_element.name != 'h3' or next_element.name != 'div'):
+        next_element = datenschutz_abschnitt.find_next("div")
+        while next_element and (next_element.name != "h3" or next_element.name != "div"):
             datenschutz_text += str(next_element).strip()
             next_element = next_element.find_next_sibling()
 
@@ -169,9 +163,7 @@ def impressum_check(soup: BeautifulSoup) -> bool:
 
 
 if __name__ == "__main__":
-    request = requests.get(
-            "https://plugins.jetbrains.com/plugin/9473-texify-idea/versions"
-            )
+    request = requests.get("https://plugins.jetbrains.com/plugin/9473-texify-idea/versions")
     soup = BeautifulSoup(request.text, "html.parser")
 
     result = impressum_check(soup)

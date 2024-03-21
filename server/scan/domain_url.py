@@ -22,7 +22,7 @@ import logging
 import re
 import time
 
-from oneguardai import const
+from server import const
 
 # Child logger.
 LOGGER = logging.getLogger(__name__)

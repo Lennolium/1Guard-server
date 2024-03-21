@@ -22,7 +22,7 @@ import subprocess
 from importlib import import_module
 from urllib.parse import urlparse
 
-from oneguardai import const
+from server import const
 
 # Child logger.
 LOGGER = logging.getLogger(__name__)
@@ -34,7 +34,7 @@ def social(domain: str) -> dict or None:
     """
 
     # Search for profiles with url.tld and url (shop.com and shop).
-    domain_strip = '.'.join(domain.split('.')[:-1])
+    domain_strip = ".".join(domain.split(".")[:-1])
 
     # Need to import social-analyzer dynamically because it has a
     # '-' in its name.
@@ -42,20 +42,25 @@ def social(domain: str) -> dict or None:
 
     results = {"all_count": 0, "social_count": 0, "all": [], "social": []}
     for name in [domain, domain_strip]:
-        result = social_analyzer.run_as_object(username=name, top=30,
-                                               silent=True, output="json",
-                                               filter="good", metadata=False,
-                                               timeout=const.TIMEOUT,
-                                               profiles="detected",
-                                               trim=True, method="find",
-                                               extract=False, options="link, "
-                                                                      "type",
-                                               )["detected"]
+        result = social_analyzer.run_as_object(
+            username=name,
+            top=30,
+            silent=True,
+            output="json",
+            filter="good",
+            metadata=False,
+            timeout=const.TIMEOUT,
+            profiles="detected",
+            trim=True,
+            method="find",
+            extract=False,
+            options="link, " "type",
+        )["detected"]
 
         for item in result:
 
             # 'https://my.shop.com/buy/this' -> 'shop'.
-            domain_name = urlparse(item["link"]).netloc.split('.')[-2]
+            domain_name = urlparse(item["link"]).netloc.split(".")[-2]
 
             # Save pretty name of social media platform and count.
             if domain_name not in results["all"]:
@@ -71,7 +76,7 @@ def social(domain: str) -> dict or None:
 
 
 def social2(domain: str) -> dict or None:
-    domain_strip = '.'.join(domain.split('.')[:-1])
+    domain_strip = ".".join(domain.split(".")[:-1])
 
     sherlock_local_path = f"{const.APP_PATH}/utils/sherlock/sherlock.py"
     opt_arguments = "--no-color"
@@ -83,12 +88,22 @@ def social2(domain: str) -> dict or None:
     results = {"social_count": 0, "social": []}
 
     try:
-        result = subprocess.run(["python3", sherlock_local_path,
-                                 domain_strip, opt_arguments, timeout_arg,
-                                 timeout_val, output_arg, output_val],
-                                capture_output=True,
-                                text=True, check=True, timeout=300
-                                )
+        result = subprocess.run(
+            [
+                "python3",
+                sherlock_local_path,
+                domain_strip,
+                opt_arguments,
+                timeout_arg,
+                timeout_val,
+                output_arg,
+                output_val,
+            ],
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=300,
+        )
 
         # print(result.stdout)
 
@@ -105,7 +120,8 @@ def social2(domain: str) -> dict or None:
         return results
 
     except subprocess.CalledProcessError as e:
-        LOGGER.error("An error occurred while fetching the social media "
-                     f"profiles: {str(e)} {str(e.output)}."
-                     )
+        LOGGER.error(
+            "An error occurred while fetching the social media "
+            f"profiles: {str(e)} {str(e.output)}."
+        )
         return None

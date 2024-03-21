@@ -31,9 +31,9 @@ import simple_header
 from bs4 import BeautifulSoup
 from urllib.parse import quote
 
-from oneguardai.utils import log
-from oneguardai import const
-from oneguardai.data import exceptions
+from server.utils import log
+from server import const
+from server.data import exceptions
 
 # Root logger and log counter.
 if __name__ == "__main__":
