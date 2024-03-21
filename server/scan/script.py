@@ -18,7 +18,7 @@ __status__ = "Prototype"
 # Imports.
 import requests
 
-from oneguardai import const
+from server import const
 
 
 def statusbar_mouseover(response: requests.Response) -> bool:

@@ -25,7 +25,7 @@ from datetime import datetime
 import requests
 from OpenSSL import SSL
 
-from oneguardai import const
+from server import const
 
 # Child logger.
 LOGGER = logging.getLogger(__name__)
@@ -49,9 +49,7 @@ def https_encrypted(domain: str) -> dict or bool:
         common_name = cert.get_subject().commonName
         ssl_version = connection.get_protocol_version_name()
         issuer = cert.get_issuer().CN
-        expiry_date = datetime.strptime(cert.get_notAfter().decode("ascii"),
-                                        "%Y%m%d%H%M%SZ"
-                                        )
+        expiry_date = datetime.strptime(cert.get_notAfter().decode("ascii"), "%Y%m%d%H%M%SZ")
         signature_algorithm = cert.get_signature_algorithm().decode("ascii")
 
         wildcard = common_name.startswith("*.")
@@ -61,13 +59,13 @@ def https_encrypted(domain: str) -> dict or bool:
             return False
 
         return {
-                "ssl_version": ssl_version,
-                "common_name": common_name,
-                "wildcard": wildcard,
-                "issuer": issuer,
-                "expiry_date": expiry_date,
-                "signature_algorithm": signature_algorithm
-                }
+            "ssl_version": ssl_version,
+            "common_name": common_name,
+            "wildcard": wildcard,
+            "issuer": issuer,
+            "expiry_date": expiry_date,
+            "signature_algorithm": signature_algorithm,
+        }
 
     # No HTTPS enabled (insecure).
     except:
@@ -141,11 +139,11 @@ def security_headers(response: requests.Response) -> dict:
 
         # List of security headers to check.
         security_headers = [
-                "strict-transport-security",  # HSTS
-                "content-security-policy",  # CSP
-                "x-content-type-options",  # X-Content-Type-Options
-                "x-frame-options",  # X-Frame-Options
-                ]
+            "strict-transport-security",  # HSTS
+            "content-security-policy",  # CSP
+            "x-content-type-options",  # X-Content-Type-Options
+            "x-frame-options",  # X-Frame-Options
+        ]
 
         result = {}
 
@@ -161,12 +159,12 @@ def security_headers(response: requests.Response) -> dict:
 
     except Exception:
         result = {
-                "strict-transport-security": False,
-                "content-security-policy": False,
-                "x-content-type-options": False,
-                "x-frame-options": False,
-                "secure-cookies": False
-                }
+            "strict-transport-security": False,
+            "content-security-policy": False,
+            "x-content-type-options": False,
+            "x-frame-options": False,
+            "secure-cookies": False,
+        }
 
     return result
 
