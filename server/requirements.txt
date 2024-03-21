@@ -34,3 +34,4 @@ pypywhois
 httpx
 cloudscraper
 waybackpy
+simple-header
