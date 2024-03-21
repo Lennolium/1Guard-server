@@ -30,3 +30,4 @@ pandas
 tensorflow
 scikit-learn
 country_converter
+pypywhois
