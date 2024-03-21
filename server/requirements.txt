@@ -29,3 +29,4 @@ flask-cors
 pandas
 tensorflow
 scikit-learn
+country_converter
