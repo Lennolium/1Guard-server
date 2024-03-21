@@ -18,11 +18,13 @@ __status__ = "Prototype"
 # Imports.
 import logging
 from datetime import datetime, timedelta
+from tensorflow.keras.models import load_model
+import pandas as pd
+from .features import WebsiteFeatures
 
 from ..database import database
 from ..model import ai
-from ..scan import scan
-from ..secrets import secrets
+from .. import scan
 
 # Child logger.
 LOGGER = logging.getLogger(__name__)
@@ -91,7 +93,18 @@ def analyze(domain):
     #     "user_score_readable": data.get("user_score_readable"),
     #     "category": data.get("category"),
     # }
-    pass
+    """
+    Get the final domain score
+    """
+    model = load_model("oneguardai.h5")
+    obj = WebsiteFeatures(domain)
+
+    obj.feature_extraction()
+
+    df = pd.DataFrame([obj.features], columns=obj.features_names)
+    scaled_features = scaler.transform(df)
+    prediction = model.predict(scaled_features)
+    return prediction
 
 
 def feedback(domain: str, user_feedback: str) -> bool:

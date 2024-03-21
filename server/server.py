@@ -19,9 +19,8 @@ __status__ = "Prototype"
 import signal
 import sys
 
-import const
-from api import api
-from utils import log
+from server.api import api
+from server.utils import log
 
 # Root logger and log counter.
 LOG_COUNT = log.LogCount()
@@ -44,10 +43,7 @@ def exit_handler(signum=None, frame=None, error=False):
     # If error is True, an error occurred which caused the exit.
     if error:
         code = 1
-        LOGGER.critical(
-                "A critical error occurred that caused the server "
-                "to exit unexpectedly."
-                )
+        LOGGER.critical("A critical error occurred that caused the server " "to exit unexpectedly.")
 
     else:
         code = 0
@@ -74,9 +70,9 @@ def exception_handler(exc_type, exc_value, exc_traceback):
         return
 
     LOGGER.critical(
-            "Uncaught Exception:",
-            exc_info=(exc_type, exc_value, exc_traceback),
-            )
+        "Uncaught Exception:",
+        exc_info=(exc_type, exc_value, exc_traceback),
+    )
 
     exit_handler(error=True)
 
@@ -94,12 +90,8 @@ def main():
     LOGGER.setLevel(10)
 
     LOGGER.info("--------- Startup: ---------")
-    LOGGER.debug(f"APP_PATH: {const.APP_PATH}")
     LOGGER.info("Starting 1Guard server and running startup checks ...")
-    LOGGER.info(
-            f"You are running 1Guard server version: {__version__} "
-            f"({__build__})."
-            )
+    LOGGER.info(f"You are running 1Guard server version: {__version__} " f"({__build__}).")
 
     # Start API flask server.
     api.start()

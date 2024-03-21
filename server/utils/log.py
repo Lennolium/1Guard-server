@@ -21,7 +21,7 @@ import os
 import sys
 from logging.handlers import RotatingFileHandler
 
-import const
+from .. import const
 
 
 # Custom logging handler to count warnings, errors and criticals.

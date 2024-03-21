@@ -20,6 +20,7 @@ import hashlib
 import logging
 from datetime import datetime, timedelta
 from functools import wraps
+import pandas as pd
 
 import jwt
 from flask import Flask, jsonify, request
@@ -196,7 +197,7 @@ def auth_error(status_code, message=None):
 
 
 @app.route("/analyze/ask", methods=["POST"])
-@token_auth.login_required
+# @token_auth.login_required
 @throttle
 def analyze():
     """
