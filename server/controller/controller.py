@@ -38,59 +38,60 @@ def calculate_score(domain: str) -> tuple[int, int, str]:
 
 def analyze(domain):
     # Create database connection.
-    LOGGER.debug("Connecting to database...")
-    db_manager = database.DatabaseManager(
-        secrets.DB_URI,
-        secrets.DB_NAME,
-        secrets.DB_COLLECTION,
-    )
+    # LOGGER.debug("Connecting to database...")
+    # db_manager = database.DatabaseManager(
+    #     secrets.DB_URI,
+    #     secrets.DB_NAME,
+    #     secrets.DB_COLLECTION,
+    # )
 
-    data = db_manager.get_by_domain(domain)
-    now = datetime.now()
+    # data = db_manager.get_by_domain(domain)
+    # now = datetime.now()
 
-    if data:
-        data_timestamp = data.get("updated_at")
-    else:
-        data_timestamp = None
+    # if data:
+    #     data_timestamp = data.get("updated_at")
+    # else:
+    #     data_timestamp = None
 
-    # Entry exists in database and is younger than 14 days.
-    if data_timestamp and now - data_timestamp < timedelta(days=secrets.DB_RETENTION):
-        LOGGER.debug(
-            f"Found entry for {domain} in database, which is younger "
-            f"than {str(secrets.DB_RETENTION)} days."
-        )
+    # # Entry exists in database and is younger than 14 days.
+    # if data_timestamp and now - data_timestamp < timedelta(days=secrets.DB_RETENTION):
+    #     LOGGER.debug(
+    #         f"Found entry for {domain} in database, which is younger "
+    #         f"than {str(secrets.DB_RETENTION)} days."
+    #     )
 
-    # No entry in database or older than 14 days -> calculate the score,
-    # create a new entry and store it in the database.
-    else:
-        score, user_score, category = calculate_score(domain)
+    # # No entry in database or older than 14 days -> calculate the score,
+    # # create a new entry and store it in the database.
+    # else:
+    #     score, user_score, category = calculate_score(domain)
 
-        # Create a new entry.
-        entry = database.WebsiteScoreEntry(domain, score, user_score, category)
+    #     # Create a new entry.
+    #     entry = database.WebsiteScoreEntry(domain, score, user_score, category)
 
-        data = entry.to_dict()
+    #     data = entry.to_dict()
 
-        # No entry -> store the new entry in the database.
-        if data_timestamp is None:
-            db_manager.insert_entry(data)
-            LOGGER.debug(f"Created new entry for {domain} in database.")
+    #     # No entry -> store the new entry in the database.
+    #     if data_timestamp is None:
+    #         db_manager.insert_entry(data)
+    #         LOGGER.debug(f"Created new entry for {domain} in database.")
 
-        # Entry available -> Update entry in database.
-        else:
-            db_manager.update_entry(data)
-            LOGGER.debug(f"Updated entry for {domain} in database.")
+    #     # Entry available -> Update entry in database.
+    #     else:
+    #         db_manager.update_entry(data)
+    #         LOGGER.debug(f"Updated entry for {domain} in database.")
 
-    # At this point, the score is either retrieved from the database or
-    # calculated and stored in the database. Now, the score is returned
-    # to the API endpoint, which will send it to the client.
-    return {
-        "domain": data.get("domain"),
-        "score": data.get("score"),
-        "score_readable": data.get("score_readable"),
-        "user_score": data.get("user_score"),
-        "user_score_readable": data.get("user_score_readable"),
-        "category": data.get("category"),
-    }
+    # # At this point, the score is either retrieved from the database or
+    # # calculated and stored in the database. Now, the score is returned
+    # # to the API endpoint, which will send it to the client.
+    # return {
+    #     "domain": data.get("domain"),
+    #     "score": data.get("score"),
+    #     "score_readable": data.get("score_readable"),
+    #     "user_score": data.get("user_score"),
+    #     "user_score_readable": data.get("user_score_readable"),
+    #     "category": data.get("category"),
+    # }
+    pass
 
 
 def feedback(domain: str, user_feedback: str) -> bool:

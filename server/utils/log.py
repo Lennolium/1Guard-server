@@ -49,19 +49,16 @@ def create_logger(counter):
     logger = logging.getLogger()
 
     # Log file: Rotate log file every 2 MB and keep 5 old log files.
-    file_handler = RotatingFileHandler(
-            const.LOG_FILE, backupCount=5, maxBytes=2000000
-            )
+    file_handler = RotatingFileHandler(const.LOG_FILE, backupCount=5, maxBytes=2000000)
 
     # Stdout: Print log messages to stdout (only for testing).
     stdout_handler = logging.StreamHandler(stream=sys.stdout)
 
     # Define format (level, timestamp, filename, line number, message).
     fmt = logging.Formatter(
-            fmt="%(levelname)s | %(asctime)s | %(filename)s:%(lineno)s | %("
-                "message)s",
-            datefmt="%Y-%m-%dT%H:%M:%SZ",
-            )
+        fmt="%(levelname)s | %(asctime)s | %(filename)s:%(lineno)s | %(" "message)s",
+        datefmt="%Y-%m-%dT%H:%M:%SZ",
+    )
 
     # Set the format for the handlers.
     file_handler.setFormatter(fmt)
@@ -90,11 +87,9 @@ def add_handler(logger_obj, dest):
         stdout_handler = logging.StreamHandler(stream=sys.stdout)
         # Define format (level, timestamp, filename, line number, message).
         fmt = logging.Formatter(
-                fmt="%(levelname)s | %(asctime)s | %(filename)s:%(lineno)s | "
-                    "%("
-                    "message)s",
-                datefmt="%Y-%m-%dT%H:%M:%SZ",
-                )
+            fmt="%(levelname)s | %(asctime)s | %(filename)s:%(lineno)s | " "%(" "message)s",
+            datefmt="%Y-%m-%dT%H:%M:%SZ",
+        )
         stdout_handler.setFormatter(fmt)
 
         logger_obj.addHandler(stdout_handler)

@@ -29,6 +29,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 from ..controller import controller
 from ..secrets import secrets
+from flask_cors import CORS
 
 # Child logger.
 LOGGER = logging.getLogger(__name__)
@@ -39,6 +40,7 @@ token_auth = HTTPTokenAuth()
 
 # Create the Flask application.
 app = Flask(__name__)
+CORS(app)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1)
 
 
@@ -206,10 +208,24 @@ def analyze():
     # Extract the data from the request.
     domain = data.get("domain")
 
-    # Forward the data to the controller.
-    response_data = controller.analyze(domain)
+    return (
+        jsonify(
+            {
+                "domain": "www.amazon.com",
+                "score": "15",
+                "score_readable": "A+",
+                "user_score": "14",
+                "user_score_readable": "A",
+                # "category": data.get("category"),
+            }
+        ),
+        200,
+    )
 
-    return jsonify(response_data), 200
+    # # Forward the data to the controller.
+    # response_data = controller.analyze(domain)
+
+    # return jsonify(response_data), 200
 
 
 # TODO: Implement endpoint to receive the user feedback from client.

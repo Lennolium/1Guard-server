@@ -39,10 +39,12 @@ class DatabaseManager:
     :type db_collection: str
     """
 
-    def __init__(self, db_url: str,
-                 db_name: str,
-                 db_collection: str,
-                 ) -> None:
+    def __init__(
+        self,
+        db_url: str,
+        db_name: str,
+        db_collection: str,
+    ) -> None:
         """
         Initializes the DatabaseManager with the specified database URL,
         name, and collection, along with an optional TLS certificate.
@@ -59,18 +61,15 @@ class DatabaseManager:
 
         # Check if server is available, ping does not require auth.
         try:
-            self.client.admin.command('ping')
+            self.client.admin.command("ping")
             LOGGER.debug("Successfully connected to MongoDB server.")
         except errors.ConnectionFailure as e:
-            LOGGER.error("Could not connect to MongoDB server. Error: "
-                         f"{str(e)}"
-                         )
+            LOGGER.error("Could not connect to MongoDB server. Error: " f"{str(e)}")
 
         self.db = self.client[db_name]
         self.collection = self.db[db_collection]
 
     def insert_entry(self, data: dict) -> None:
-
         """
         The insert_entry function takes a dictionary as an argument and
         inserts it into the database. It also adds two keys to the
@@ -104,10 +103,7 @@ class DatabaseManager:
         now = datetime.now()
         data["updated_at"] = now
         domain = data.get("domain")
-        self.collection.update_one(
-                {"domain": domain},
-                {"$set": data}
-                )
+        self.collection.update_one({"domain": domain}, {"$set": data})
 
         LOGGER.debug(f"Updated entry into database: {data}")
 
@@ -158,8 +154,7 @@ class WebsiteScore(ABC):
     :type category: str
     """
 
-    def __init__(self, domain: str, score: int, user_score: int, category: str
-                 ) -> None:
+    def __init__(self, domain: str, score: int, user_score: int, category: str) -> None:
         """
         Initializes the WebsiteScore with the specified domain, score,
         user score, and category.
@@ -208,23 +203,23 @@ class WebsiteScore(ABC):
         """
 
         grades: dict = {
-                0: "F",
-                1: "E-",
-                2: "E",
-                3: "E+",
-                4: "D-",
-                5: "D",
-                6: "D+",
-                7: "C-",
-                8: "C",
-                9: "C+",
-                10: "B-",
-                11: "B",
-                12: "B+",
-                13: "A-",
-                14: "A",
-                15: "A+"
-                }
+            0: "F",
+            1: "E-",
+            2: "E",
+            3: "E+",
+            4: "D-",
+            5: "D",
+            6: "D+",
+            7: "C-",
+            8: "C",
+            9: "C+",
+            10: "B-",
+            11: "B",
+            12: "B+",
+            13: "A-",
+            14: "A",
+            15: "A+",
+        }
         return grades.get(score, "Unknown")
 
 
@@ -242,8 +237,7 @@ class WebsiteScoreEntry(WebsiteScore):
     :type category: str
     """
 
-    def __init__(self, domain: str, score: int, user_score: int, category: str
-                 ) -> None:
+    def __init__(self, domain: str, score: int, user_score: int, category: str) -> None:
         """
         Initializes the WebsiteScoreEntry with the specified domain, score,
         user score, and category.
@@ -272,11 +266,11 @@ class WebsiteScoreEntry(WebsiteScore):
         """
 
         return {
-                "uuid": self.uuid,
-                "domain": self.domain,
-                "category": self.category,
-                "score": self.score,
-                "score_readable": self.score_readable,
-                "user_score": self.user_score,
-                "user_score_readable": self.user_score_readable,
-                }
+            "uuid": self.uuid,
+            "domain": self.domain,
+            "category": self.category,
+            "score": self.score,
+            "score_readable": self.score_readable,
+            "user_score": self.user_score,
+            "user_score_readable": self.user_score_readable,
+        }
