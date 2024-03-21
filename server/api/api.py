@@ -222,10 +222,10 @@ def analyze():
         200,
     )
 
-    # Forward the data to the controller.
-    response_data = controller.analyze(domain)
+    # # Forward the data to the controller.
+    # response_data = controller.analyze(domain)
 
-    return jsonify(response_data), 200
+    # return jsonify(response_data), 200
 
 
 # TODO: Implement endpoint to receive the user feedback from client.
