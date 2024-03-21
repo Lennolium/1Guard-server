@@ -32,3 +32,4 @@ scikit-learn
 country_converter
 pypywhois
 httpx
+cloudscraper
