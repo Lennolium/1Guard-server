@@ -28,3 +28,4 @@ gunicorn
 flask-cors
 pandas
 tensorflow
+scikit-learn

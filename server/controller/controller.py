@@ -19,6 +19,7 @@ __status__ = "Prototype"
 import logging
 from datetime import datetime, timedelta
 from tensorflow.keras.models import load_model
+from sklearn.preprocessing import StandardScaler
 import pandas as pd
 from .features import WebsiteFeatures
 
@@ -102,7 +103,8 @@ def analyze(domain):
     obj.feature_extraction()
 
     df = pd.DataFrame([obj.features], columns=obj.features_names)
-    scaled_features = scaler.transform(df)
+
+    scaled_features = StandardScaler().transform(df)
     prediction = model.predict(scaled_features)
     return prediction
 
