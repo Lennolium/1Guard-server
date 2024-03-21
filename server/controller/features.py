@@ -25,7 +25,7 @@ from bs4 import BeautifulSoup
 
 from ..scan import domain_url, https_ssl, misc, registrar, review, script
 from ..utils import log
-import scrape
+from . import scrape
 
 # Root logger and log counter.
 if __name__ == "__main__":
