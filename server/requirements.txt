@@ -33,3 +33,4 @@ country_converter
 pypywhois
 httpx
 cloudscraper
+waybackpy
