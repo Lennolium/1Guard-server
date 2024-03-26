@@ -26,6 +26,7 @@ import pandas as pd
 from .features import WebsiteFeatures
 from server import const
 from server.secrets import secrets
+from urllib.parse import urlparse
 
 from ..database import database
 from ..model import ai
@@ -52,7 +53,8 @@ def analyze(domain):
         secrets.DB_COLLECTION,
     )
 
-    print("DOMAIN", domain)
+    domain = urlparse(domain).netloc
+
     data = db_manager.get_by_domain(domain)
     print(data)
     return {
