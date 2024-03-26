@@ -27,6 +27,8 @@ zipp==3.17.0
 gunicorn
 flask-cors
 pandas
+tensorflow
+scikit-learn
 country_converter
 pypywhois
 httpx
