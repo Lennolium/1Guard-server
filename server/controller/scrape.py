@@ -95,16 +95,17 @@ class WebScraperContext:
         :rtype: str
         """
 
-        return (f"WebScraperContext("
-                f"domain={self.domain!r}, "
-                f"force_services={self.force_services!r}, "
-                f"url={self.url!r}, "
-                f"url_encoded={self.url_encoded!r}, "
-                f"headers={self.headers!r}, "
-                f"success={self.success!r}, "
-                f"response={self.response!r}, "
-                f"soup={self.soup!r})"
-                )
+        return (
+            f"WebScraperContext("
+            f"domain={self.domain!r}, "
+            f"force_services={self.force_services!r}, "
+            f"url={self.url!r}, "
+            f"url_encoded={self.url_encoded!r}, "
+            f"headers={self.headers!r}, "
+            f"success={self.success!r}, "
+            f"response={self.response!r}, "
+            f"soup={self.soup!r})"
+        )
 
 
 class ConnectionManager:
@@ -142,24 +143,16 @@ class ConnectionManager:
         # Getting the 10 most common user agents and their corresponding
         # plausible, fake browser headers.
         headers = []
-        for i, ua in enumerate(simple_header.sua.get(num=10,
-                                                     mobile=False,
-                                                     force_cached=True
-                                                     )
-                               ):
+        for i, ua in enumerate(simple_header.sua.get(num=10, mobile=False, force_cached=True)):
             headers.append(
-                    simple_header.get_dict(
-                            url=url,
-                            user_agent=ua,
-                            seed=None if i < 7 else i
-                            )
-                    )
+                simple_header.get_dict(url=url, user_agent=ua, seed=None if i < 7 else i)
+            )
         return headers
 
     def connect(
-            self,
-            domain: str,
-            ) -> httpx.Response:
+        self,
+        domain: str,
+    ) -> httpx.Response:
         """
         First connect normally to the website and fetch the data.
 
@@ -179,32 +172,24 @@ class ConnectionManager:
 
             # Take the most plausible and common header. Otherwise,
             # shuffle the headers and take a random one.
-            headers = random.SystemRandom().choice(
-                    self.generate_headers(url=url)
-                    )
+            headers = random.SystemRandom().choice(self.generate_headers(url=url))
 
             try:
                 with httpx.Client(verify=ssl_verify) as client:
                     response = client.get(
-                            url=url,
-                            headers=headers,
-                            timeout=self.ctx.timeout_connect,
-                            follow_redirects=True,
-                            )
+                        url=url,
+                        headers=headers,
+                        timeout=self.ctx.timeout_connect,
+                        follow_redirects=True,
+                    )
 
                 # Failed status code: Try next without SSL.
                 if response.status_code != 200:
-                    LOGGER.info(
-                            f"Trying to connect to '{protocol}{domain}' "
-                            f"... Failed!"
-                            )
+                    LOGGER.info(f"Trying to connect to '{protocol}{domain}' " f"... Failed!")
                     continue
 
                 # Success: Set instance attributes and return response.
-                LOGGER.info(
-                        f"Trying to connect to '{protocol}{domain}' ... "
-                        f"Success!"
-                        )
+                LOGGER.info(f"Trying to connect to '{protocol}{domain}' ... " f"Success!")
                 self.ctx.url = url
                 self.ctx.url_encoded = quote(url, safe="")
                 self.ctx.headers = headers
@@ -212,10 +197,7 @@ class ConnectionManager:
                 return response
 
             except (httpx.HTTPError, ConnectionError):
-                LOGGER.info(
-                        f"Trying to connect to '{protocol}{domain}' ... "
-                        f"Failed!"
-                        )
+                LOGGER.info(f"Trying to connect to '{protocol}{domain}' ... " f"Failed!")
                 if ssl_verify:
                     LOGGER.info(f"Retrying without SSL now.")
                 continue
@@ -257,21 +239,15 @@ class ResponseHandler:
         try:
             response_snippet = response.content[250:450]
 
-            if (b"suspected phishing site | cloudflare" in
-                    response_snippet.lower()):
-                LOGGER.debug(
-                        f"The website is flagged as phishing by CloudFlare."
-                        )
+            if b"suspected phishing site | cloudflare" in response_snippet.lower():
+                LOGGER.debug(f"The website is flagged as phishing by CloudFlare.")
                 raise exceptions.CloudflareFlaggedError(response.url)
 
         except AttributeError:
             response_snippet = response.text[250:450]
 
-            if ("suspected phishing site | cloudflare" in
-                    response_snippet.lower()):
-                LOGGER.debug(
-                        f"The website is flagged as phishing by CloudFlare."
-                        )
+            if "suspected phishing site | cloudflare" in response_snippet.lower():
+                LOGGER.debug(f"The website is flagged as phishing by CloudFlare.")
                 raise exceptions.CloudflareFlaggedError(response.url)
 
     @staticmethod
@@ -292,9 +268,9 @@ class ResponseHandler:
         result = "cloudflare" in server_info.lower()
 
         if result:
-            LOGGER.debug(f"The website is protected by a CloudFlare "
-                         f"captcha and other anti-bot measures."
-                         )
+            LOGGER.debug(
+                f"The website is protected by a CloudFlare " f"captcha and other anti-bot measures."
+            )
 
         return result
 
@@ -313,9 +289,7 @@ class ResponseHandler:
             return BeautifulSoup(response.text, "html.parser")
 
         except Exception as e:
-            raise exceptions.BeautifulSoupError(
-                    f"{e.__class__.__name__}: {e}"
-                    )
+            raise exceptions.BeautifulSoupError(f"{e.__class__.__name__}: {e}")
 
     def cloudflare_bypass(self):
         # force_services -> only scrapingant, scrapeup, dripcrawler
@@ -370,22 +344,18 @@ class ToolManager:
                 ssl = True
             scraper = cloudscraper.create_scraper()
             response = scraper.get(
-                    url=self.ctx.url,
-                    timeout=self.ctx.timeout_tools,
-                    verify=ssl,
-                    )
+                url=self.ctx.url,
+                timeout=self.ctx.timeout_tools,
+                verify=ssl,
+            )
 
             if response.status_code != 200:
-                raise exceptions.CloudScraperError(
-                        f"Status code: {response.status_code}"
-                        )
+                raise exceptions.CloudScraperError(f"Status code: {response.status_code}")
 
             return response
 
         except Exception as e:
-            raise exceptions.CloudScraperError(
-                    f"{e.__class__.__name__}: {e}"
-                    )
+            raise exceptions.CloudScraperError(f"{e.__class__.__name__}: {e}")
 
     def tool_googlecache(self) -> httpx.Response:
         """
@@ -432,7 +402,7 @@ class ToolManager:
         """
         raise NotImplementedError
 
-    def tool_waybackarchive(self) -> httpx.Response | object:
+    def tool_waybackarchive(self) -> httpx.Response:
         """
         Use the Wayback Machine to fetch the website's historic data.
 
@@ -445,15 +415,15 @@ class ToolManager:
             status_code = 200
             text = None
 
-        ua = simple_header.sua.get(num=5, shuffle=True, force_cached=True)[
-            0].string
+        ua = simple_header.sua.get(num=5, shuffle=True, force_cached=True)[0].string
 
         # Force a refresh of the website in archive (Cache refresh).
         try:
-            save_api = waybackpy.WaybackMachineSaveAPI(url=self.ctx.url,
-                                                       user_agent=ua,
-                                                       max_tries=3,
-                                                       )
+            save_api = waybackpy.WaybackMachineSaveAPI(
+                url=self.ctx.url,
+                user_agent=ua,
+                max_tries=3,
+            )
             wayback_url = save_api.save()
 
             # Refresh did not work, use the CDX API to get the newest.
@@ -462,38 +432,37 @@ class ToolManager:
 
         # If this fails, we use the CDX API to get the newest version.
         except waybackpy.exceptions.WaybackError:
-            cdx_api = waybackpy.WaybackMachineCDXServerAPI(url=self.ctx.url,
-                                                           user_agent=ua,
-                                                           max_tries=3,
-                                                           )
+            cdx_api = waybackpy.WaybackMachineCDXServerAPI(
+                url=self.ctx.url,
+                user_agent=ua,
+                max_tries=3,
+            )
             wayback_url = cdx_api.newest().archive_url
 
         # Fetch the website from the Wayback Machine.
         try:
             with httpx.Client() as client:
                 response = client.get(
-                        url=wayback_url,
-                        timeout=self.ctx.timeout_tools,
-                        follow_redirects=True,
-                        )
+                    url=wayback_url,
+                    timeout=self.ctx.timeout_tools,
+                    follow_redirects=True,
+                )
 
             if response.status_code != 200:
-                raise exceptions.WaybackArchiveError(
-                        f"Status code: {response.status_code}"
-                        )
+                raise exceptions.WaybackArchiveError(f"Status code: {response.status_code}")
 
             # We need to remove the Wayback header to get only the
             # original website's source code.
-            wb_headers = ["<!-- END WAYBACK TOOLBAR INSERT -->",
-                          "<!-- End Wayback Rewrite JS Include -->",
-                          "<!--.*end.*wayback.*-->"]
+            wb_headers = [
+                "<!-- END WAYBACK TOOLBAR INSERT -->",
+                "<!-- End Wayback Rewrite JS Include -->",
+                "<!--.*end.*wayback.*-->",
+            ]
             wb_footer = "FILE ARCHIVED ON"
 
             for wb_header in wb_headers:
-                pattern = (f".*{re.escape(wb_header)}(.*?)"
-                           f"{re.escape(wb_footer)}.*")
-                match = re.search(pattern, response.text, re.IGNORECASE
-                                  )
+                pattern = f".*{re.escape(wb_header)}(.*?)" f"{re.escape(wb_footer)}.*"
+                match = re.search(pattern, response.text, re.IGNORECASE)
 
                 if match:
                     # Convert the string to a fake response object for
@@ -506,9 +475,7 @@ class ToolManager:
             return response
 
         except Exception as e:
-            raise exceptions.WaybackArchiveError(
-                    f"{e.__class__.__name__}: {e}"
-                    )
+            raise exceptions.WaybackArchiveError(f"{e.__class__.__name__}: {e}")
 
 
 class ServiceManager:
@@ -545,32 +512,28 @@ class ServiceManager:
             content = None
 
         # render = True -> enable JavaScript rendering.
-        payload = {"url": self.ctx.url,
-                   "javascript_rendering": "True"
-                   }
+        payload = {"url": self.ctx.url, "javascript_rendering": "True"}
 
         api_headers = {
-                "content-type": "application/json",
-                "X-RapidAPI-Key": const.API_KEY_DRIPCRAWLER,
-                "X-RapidAPI-Host": "dripcrawler.p.rapidapi.com"
-                }
+            "content-type": "application/json",
+            "X-RapidAPI-Key": const.API_KEY_DRIPCRAWLER,
+            "X-RapidAPI-Host": "dripcrawler.p.rapidapi.com",
+        }
 
         endpoint = "https://dripcrawler.p.rapidapi.com/"
 
         try:
             with httpx.Client() as client:
                 response = client.post(
-                        url=endpoint,
-                        json=payload,
-                        headers=api_headers,
-                        timeout=self.ctx.timeout_services,
-                        follow_redirects=True,
-                        )
+                    url=endpoint,
+                    json=payload,
+                    headers=api_headers,
+                    timeout=self.ctx.timeout_services,
+                    follow_redirects=True,
+                )
 
             if response.status_code != 200:
-                raise exceptions.DripCrawlerFailedError(
-                        f"Status code: {response.status_code}"
-                        )
+                raise exceptions.DripCrawlerFailedError(f"Status code: {response.status_code}")
 
             # Convert the json response to a fake response object for
             # compatibility with the other services.
@@ -581,9 +544,7 @@ class ServiceManager:
             return fake_response
 
         except (httpx.HTTPError, ConnectionError) as e:
-            raise exceptions.DripCrawlerFailedError(
-                    f"{e.__class__.__name__}: {e}"
-                    )
+            raise exceptions.DripCrawlerFailedError(f"{e.__class__.__name__}: {e}")
 
     def service_scrapingant(self) -> httpx.Response:
         """
@@ -595,37 +556,57 @@ class ServiceManager:
         """
 
         # Extract the proxy country from accept language header.
-        countries_supp = ("BR", "CA", "CN", "CZ", "FR", "DE", "HK", "IN",
-                          "ID", "IT", "IL", "JP", "NL", "PL", "RU", "SA", "SG",
-                          "KR", "ES", "GB", "AE", "US", "VN")
+        countries_supp = (
+            "BR",
+            "CA",
+            "CN",
+            "CZ",
+            "FR",
+            "DE",
+            "HK",
+            "IN",
+            "ID",
+            "IT",
+            "IL",
+            "JP",
+            "NL",
+            "PL",
+            "RU",
+            "SA",
+            "SG",
+            "KR",
+            "ES",
+            "GB",
+            "AE",
+            "US",
+            "VN",
+        )
         country = self.ctx.headers["Accept-Language"][3:5].upper()
         if country not in countries_supp:
             country = "US"
 
-        endpoint = (f"https://api.scrapingant.com/v2/general?url="
-                    f"{self.ctx.url_encoded}&x-api-key="
-                    f"{const.API_KEY_SCRAPANT}&proxy_country={country}"
-                    f"&return_page_source=true")
+        endpoint = (
+            f"https://api.scrapingant.com/v2/general?url="
+            f"{self.ctx.url_encoded}&x-api-key="
+            f"{const.API_KEY_SCRAPANT}&proxy_country={country}"
+            f"&return_page_source=true"
+        )
 
         try:
             with httpx.Client() as client:
                 response = client.get(
-                        url=endpoint,
-                        timeout=self.ctx.timeout_services,
-                        follow_redirects=True,
-                        )
+                    url=endpoint,
+                    timeout=self.ctx.timeout_services,
+                    follow_redirects=True,
+                )
 
             if response.status_code != 200:
-                raise exceptions.ScrapingAntFailedError(
-                        f"Status code: {response.status_code}"
-                        )
+                raise exceptions.ScrapingAntFailedError(f"Status code: {response.status_code}")
 
             return response
 
         except (httpx.HTTPError, ConnectionError) as e:
-            raise exceptions.ScrapingAntFailedError(
-                    f"{e.__class__.__name__}: {e}"
-                    )
+            raise exceptions.ScrapingAntFailedError(f"{e.__class__.__name__}: {e}")
 
     def service_scrapeup(self) -> httpx.Response:
         """
@@ -637,33 +618,30 @@ class ServiceManager:
         """
 
         # render = True -> enable JavaScript rendering.
-        payload = {"api_key": const.API_KEY_SCRAPEUP,
-                   "url": self.ctx.url_encoded,
-                   "render": True,
-                   }
+        payload = {
+            "api_key": const.API_KEY_SCRAPEUP,
+            "url": self.ctx.url_encoded,
+            "render": True,
+        }
 
         endpoint = "http://api.scrapeup.com"
 
         try:
             with httpx.Client() as client:
                 response = client.get(
-                        url=endpoint,
-                        params=payload,
-                        timeout=self.ctx.timeout_services,
-                        follow_redirects=True,
-                        )
+                    url=endpoint,
+                    params=payload,
+                    timeout=self.ctx.timeout_services,
+                    follow_redirects=True,
+                )
 
             if response.status_code != 200:
-                raise exceptions.ScrapeUpFailedError(
-                        f"Status code: {response.status_code}"
-                        )
+                raise exceptions.ScrapeUpFailedError(f"Status code: {response.status_code}")
 
             return response
 
         except (httpx.HTTPError, ConnectionError) as e:
-            raise exceptions.ScrapeUpFailedError(
-                    f"{e.__class__.__name__}: {e}"
-                    )
+            raise exceptions.ScrapeUpFailedError(f"{e.__class__.__name__}: {e}")
 
 
 class WebScraper:
@@ -673,10 +651,10 @@ class WebScraper:
     timeout_services = 60
 
     def __init__(
-            self,
-            domain: str,
-            force_services: bool = False,
-            ):
+        self,
+        domain: str,
+        force_services: bool = False,
+    ):
         """
         Initialize the WebScraper object to start the scraping process.
 
@@ -713,9 +691,7 @@ class WebScraper:
             self.success = True
 
         except exceptions.WebScraperException as e:
-            LOGGER.error(f"Error while creating WebScra"
-                         f"per: {e.__class__.__name__}: {e}"
-                         )
+            LOGGER.error(f"Error while creating WebScra" f"per: {e.__class__.__name__}: {e}")
             self.success = False
 
     def start(self):
@@ -746,9 +722,7 @@ class WebScraper:
             # 2.1. Try local tool first: Cloudscraper.
             if not self.ctx.force_services:
                 try:
-                    LOGGER.info(
-                            "Trying to bypass with Cloudscraper."
-                            )
+                    LOGGER.info("Trying to bypass with Cloudscraper.")
                     response = self.tm.tool_cloudscraper()
                     self.rh.cloudflare_flagged(response=response)
                 except exceptions.CloudScraperError as e:
@@ -756,26 +730,26 @@ class WebScraper:
 
             # 2.2. Try external services. Choose the order of services
             # randomly to avoid overusing one service.
-            services = [self.sm.service_scrapingant,
-                        self.sm.service_scrapeup,
-                        self.sm.service_dripcrawler]
+            services = [
+                self.sm.service_scrapingant,
+                self.sm.service_scrapeup,
+                self.sm.service_dripcrawler,
+            ]
             random.SystemRandom().shuffle(services)
 
             for i, service in enumerate(services, start=1):
 
                 try:
                     # Try the service.
-                    LOGGER.info(f"Trying to bypass with "
-                                f"{service.__name__.split('_')[-1]} ({i}/3)."
-                                )
+                    LOGGER.info(
+                        f"Trying to bypass with " f"{service.__name__.split('_')[-1]} ({i}/3)."
+                    )
                     response = service()
 
                     # If worked, check if the website is flagged as
                     # phishing by Cloudflare, do not catch (see below).
                     self.rh.cloudflare_flagged(response=response)
-                    LOGGER.info("Success! And not flagged as phishing by "
-                                "CloudFlare."
-                                )
+                    LOGGER.info("Success! And not flagged as phishing by " "CloudFlare.")
                     break
 
                 except exceptions.ScrapingServicesError as e:
@@ -803,9 +777,10 @@ class WebScraper:
 
     @classmethod
     def get(
-            cls,
-            domain: str,
-            force_services: bool = False, ):
+        cls,
+        domain: str,
+        force_services: bool = False,
+    ):
         """
         Convenience function to create a ready-to-go WebScraper object.
         Automatically starts the scraping process and returns the
@@ -906,15 +881,14 @@ if __name__ == "__main__":
 
     exit(0)
 
-    lol = ("https://api.scrapingant.com/v2/general?url="
-           "{SCRAPEURL}&x-api-key="
-           "{APIKEY}&proxy_country={LANGUAGE}"
-           "&return_page_source=true")
+    lol = (
+        "https://api.scrapingant.com/v2/general?url="
+        "{SCRAPEURL}&x-api-key="
+        "{APIKEY}&proxy_country={LANGUAGE}"
+        "&return_page_source=true"
+    )
 
-    lol2 = lol.format(SCRAPEURL="https://www.google.de",
-                      APIKEY="123",
-                      LANGUAGE="DE"
-                      )
+    lol2 = lol.format(SCRAPEURL="https://www.google.de", APIKEY="123", LANGUAGE="DE")
     print(lol2)
 
     url = "http://0532lx.com"

@@ -209,24 +209,24 @@ def analyze():
     # Extract the data from the request.
     domain = data.get("domain")
 
-    return (
-        jsonify(
-            {
-                "domain": "www.amazon.com",
-                "score": "15",
-                "score_readable": "A+",
-                "user_score": "14",
-                "user_score_readable": "A",
-                # "category": data.get("category"),
-            }
-        ),
-        200,
-    )
+    # return (
+    #     jsonify(
+    #         {
+    #             "domain": "www.amazon.com",
+    #             "score": "15",
+    #             "score_readable": "A+",
+    #             "user_score": "14",
+    #             "user_score_readable": "A",
+    #             # "category": data.get("category"),
+    #         }
+    #     ),
+    #     200,
+    # )
 
     # # Forward the data to the controller.
-    # response_data = controller.analyze(domain)
+    response_data = controller.analyze(domain)
 
-    # return jsonify(response_data), 200
+    return jsonify(response_data), 200
 
 
 # TODO: Implement endpoint to receive the user feedback from client.

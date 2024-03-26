@@ -37,7 +37,7 @@ from server.controller import scrape
 LOGGER = logging.getLogger(__name__)
 
 
-def trustpilot(domain: str) -> dict | dict[float, int]:
+def trustpilot(domain: str) -> dict:
     """
     Get the trustpilot reviews for the specified domain.
 
