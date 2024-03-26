@@ -17,11 +17,14 @@ __status__ = "Prototype"
 
 # Imports.
 import logging
+import numpy as np
+import joblib
 from datetime import datetime, timedelta
 from tensorflow.keras.models import load_model
 from sklearn.preprocessing import StandardScaler
 import pandas as pd
 from .features import WebsiteFeatures
+from server import const
 
 from ..database import database
 from ..model import ai
@@ -97,15 +100,30 @@ def analyze(domain):
     """
     Get the final domain score
     """
-    model = load_model("oneguardai_hdf.h5")
-    obj = WebsiteFeatures(domain)
+    model = load_model("oneguardai.keras")
+    scaler = joblib.load("scaler.pkl")
 
+    obj = WebsiteFeatures(domain)
     obj.feature_extraction()
 
     df = pd.DataFrame([obj.features], columns=obj.features_names)
+    df["WHOIS_COUNTRY"] = df["WHOIS_COUNTRY"].replace(const.COUNTRY_MAP)
 
-    scaled_features = StandardScaler().transform(df)
+    # Replace NaN values with 0.
+    df.replace("NaN", np.nan, inplace=True)
+    df = df.infer_objects(copy=False)
+    df.fillna(0, inplace=True)
+
+    # Convert all columns to numeric.
+    df = df.apply(pd.to_numeric)
+    df = df.select_dtypes(include=[np.number])
+    df = pd.DataFrame(df)
+
+    # Standardize and normalize the features.
+    scaled_features = scaler.transform(df)
+
     prediction = model.predict(scaled_features)
+
     return prediction
 
 

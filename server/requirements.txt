@@ -35,3 +35,4 @@ httpx
 cloudscraper
 waybackpy
 simple-header
+joblib
