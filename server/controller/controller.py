@@ -97,7 +97,7 @@ def analyze(domain):
     """
     Get the final domain score
     """
-    model = load_model("oneguardai.h5")
+    model = load_model("oneguardai_hdf.h5")
     obj = WebsiteFeatures(domain)
 
     obj.feature_extraction()
