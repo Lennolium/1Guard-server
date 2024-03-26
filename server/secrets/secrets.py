@@ -19,10 +19,10 @@ __status__ = "Prototype"
 import os
 
 # Database credentials. We get the sensitive data from environment vars.
-# DB_NAME = "1guard_db"
-# DB_COLLECTION = "website_scores"
-# DB_URI = os.environ["MONGODB_URI"]
-# DB_RETENTION = 14
+DB_NAME = "1guard_db"
+DB_COLLECTION = "website_scores"
+DB_URI = os.environ["DB_URI"]
+DB_RETENTION = 14
 
 # API.
 API_SECRET_KEY = os.environ["API_SECRET_KEY"]

@@ -25,6 +25,7 @@ from sklearn.preprocessing import StandardScaler
 import pandas as pd
 from .features import WebsiteFeatures
 from server import const
+from server.secrets import secrets
 
 from ..database import database
 from ..model import ai
@@ -45,11 +46,11 @@ def calculate_score(domain: str) -> tuple[int, int, str]:
 def analyze(domain):
     # Create database connection.
     # LOGGER.debug("Connecting to database...")
-    # db_manager = database.DatabaseManager(
-    #     secrets.DB_URI,
-    #     secrets.DB_NAME,
-    #     secrets.DB_COLLECTION,
-    # )
+    db_manager = database.DatabaseManager(
+        secrets.DB_URI,
+        secrets.DB_NAME,
+        secrets.DB_COLLECTION,
+    )
 
     # data = db_manager.get_by_domain(domain)
     # now = datetime.now()
