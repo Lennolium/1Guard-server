@@ -52,6 +52,7 @@ def analyze(domain):
         secrets.DB_COLLECTION,
     )
 
+    print("DOMAIN", domain)
     data = db_manager.get_by_domain(domain)
     print(data)
     return {
