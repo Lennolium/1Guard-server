@@ -52,7 +52,16 @@ def analyze(domain):
         secrets.DB_COLLECTION,
     )
 
-    # data = db_manager.get_by_domain(domain)
+    data = db_manager.get_by_domain(domain)
+    print(data)
+    return {
+        "domain": domain,
+        "score": data["score"],
+        # "score_readable": data.get("score_readable"),
+        # "user_score": data.get("user_score"),
+        # "user_score_readable": data.get("user_score_readable"),
+        # "category": data.get("category"),
+    }
     # now = datetime.now()
 
     # if data:
