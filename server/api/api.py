@@ -197,7 +197,7 @@ def auth_error(status_code, message=None):
 
 
 @app.route("/analyze/ask", methods=["POST"])
-@token_auth.login_required
+# @token_auth.login_required
 @throttle
 def analyze():
     """
