@@ -61,8 +61,10 @@ def analyze(domain):
 
     score = 0
     found = False
+
+    print("Searching for", domain)
     for index, row in df.iterrows():
-        if row["domain"] == domain:
+        if row["domain"] == domain.lower():
             score = row["score"]
             found = True
 
