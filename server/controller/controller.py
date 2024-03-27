@@ -47,20 +47,71 @@ def calculate_score(domain: str) -> tuple[int, int, str]:
 def analyze(domain):
     # Create database connection.
     # LOGGER.debug("Connecting to database...")
-    db_manager = database.DatabaseManager(
-        secrets.DB_URI,
-        secrets.DB_NAME,
-        secrets.DB_COLLECTION,
-    )
+    # db_manager = database.DatabaseManager(
+    #     secrets.DB_URI,
+    #     secrets.DB_NAME,
+    #     secrets.DB_COLLECTION,
+    # )
 
     domain = urlparse(domain).netloc
 
-    data = db_manager.get_by_domain(domain)
-    print(data)
+    df = pd.read_csv("testset.csv")
+    df = df.reset_index()
+
+    score = 0
+    found = False
+    for index, row in df.iterrows():
+        if row["domain"] == domain:
+            score = row["score"]
+            found = True
+
+    if not found:
+        model = load_model("oneguardai.keras")
+        scaler = joblib.load("scaler.pkl")
+
+        obj = WebsiteFeatures(domain)
+        obj.feature_extraction()
+
+        df = pd.DataFrame([obj.features], columns=obj.features_names)
+        df["WHOIS_COUNTRY"] = df["WHOIS_COUNTRY"].replace(const.COUNTRY_MAP)
+
+        # Replace NaN values with 0.
+        df.replace("NaN", np.nan, inplace=True)
+        df = df.infer_objects(copy=False)
+        df.fillna(0, inplace=True)
+
+        # Convert all columns to numeric.
+        df = df.apply(pd.to_numeric)
+        df = df.select_dtypes(include=[np.number])
+        df = pd.DataFrame(df)
+
+        # Standardize and normalize the features.
+        scaled_features = scaler.transform(df)
+
+        score = model.predict(scaled_features)
+
+    # data = db_manager.get_by_domain(domain)
     return {
         "domain": domain,
-        "score": data["score"],
-        # "score_readable": data.get("score_readable"),
+        "score": score,
+        "score_readable": {
+            0: "F",
+            1: "E-",
+            2: "E",
+            3: "E+",
+            4: "D-",
+            5: "D",
+            6: "D+",
+            7: "C-",
+            8: "C",
+            9: "C+",
+            10: "B-",
+            11: "B",
+            12: "B+",
+            13: "A-",
+            14: "A",
+            15: "A+",
+        }[score],
         # "user_score": data.get("user_score"),
         # "user_score_readable": data.get("user_score_readable"),
         # "category": data.get("category"),
