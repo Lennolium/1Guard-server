@@ -27,6 +27,7 @@ from .features import WebsiteFeatures
 from server import const
 from server.secrets import secrets
 from urllib.parse import urlparse
+import random
 
 from ..database import database
 from ..model import ai
@@ -66,29 +67,30 @@ def analyze(domain):
             found = True
 
     if not found:
-        model = load_model("oneguardai.keras")
-        scaler = joblib.load("scaler.pkl")
+        score = random.uniform(10, 15)
+        # model = load_model("oneguardai.keras")
+        # scaler = joblib.load("scaler.pkl")
 
-        obj = WebsiteFeatures(domain)
-        obj.feature_extraction()
+        # obj = WebsiteFeatures(domain)
+        # obj.feature_extraction()
 
-        df = pd.DataFrame([obj.features], columns=obj.features_names)
-        df["WHOIS_COUNTRY"] = df["WHOIS_COUNTRY"].replace(const.COUNTRY_MAP)
+        # df = pd.DataFrame([obj.features], columns=obj.features_names)
+        # df["WHOIS_COUNTRY"] = df["WHOIS_COUNTRY"].replace(const.COUNTRY_MAP)
 
-        # Replace NaN values with 0.
-        df.replace("NaN", np.nan, inplace=True)
-        df = df.infer_objects(copy=False)
-        df.fillna(0, inplace=True)
+        # # Replace NaN values with 0.
+        # df.replace("NaN", np.nan, inplace=True)
+        # df = df.infer_objects(copy=False)
+        # df.fillna(0, inplace=True)
 
-        # Convert all columns to numeric.
-        df = df.apply(pd.to_numeric)
-        df = df.select_dtypes(include=[np.number])
-        df = pd.DataFrame(df)
+        # # Convert all columns to numeric.
+        # df = df.apply(pd.to_numeric)
+        # df = df.select_dtypes(include=[np.number])
+        # df = pd.DataFrame(df)
 
-        # Standardize and normalize the features.
-        scaled_features = scaler.transform(df)
+        # # Standardize and normalize the features.
+        # scaled_features = scaler.transform(df)
 
-        score = model.predict(scaled_features)
+        # score = model.predict(scaled_features)
 
     # data = db_manager.get_by_domain(domain)
     return {
