@@ -67,7 +67,7 @@ def analyze(domain):
             found = True
 
     if not found:
-        score = random.uniform(10, 15)
+        score = int(random.uniform(9, 14))
         # model = load_model("oneguardai.keras")
         # scaler = joblib.load("scaler.pkl")
 
